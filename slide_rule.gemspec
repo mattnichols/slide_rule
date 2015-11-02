@@ -23,8 +23,8 @@ Gem::Specification.new do |s|
   ##
   # Development Dependencies
   #
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'pry'
-  s.add_development_dependency 'rspec'
-  s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'rake', '~> 10'
+  s.add_development_dependency 'pry', '~> 0'
+  s.add_development_dependency 'rspec', '~> 3'
+  s.add_development_dependency 'rubocop', '~> 0'
 end
