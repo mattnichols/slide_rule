@@ -1,0 +1,24 @@
+inherit_from:
+  - .rubocop_todo.yml
+
+AllCops:
+  DisplayCopNames: true
+  Exclude:
+    - 'bin/**/*'
+    - 'coverage/**/*'
+    - 'db/**/*'
+    - 'vendor/**/*'
+    - 'lib/core_ext/pkcs12.rb'
+
+Metrics/LineLength:
+  Exclude:
+    - 'spec/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 100
+  Exclude:
+    - 'spec/**/*'
+    - 'slide_rule.gemspec'

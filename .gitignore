@@ -1,0 +1,3 @@
+.rspec
+**.DS_Store
+Guardfile
