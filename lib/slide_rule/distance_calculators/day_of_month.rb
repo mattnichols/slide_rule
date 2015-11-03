@@ -8,11 +8,8 @@ module SlideRule
       #   Does not take into account the number of days in the actual month being considered.
       #
       def calculate(first, second)
-        first = Date.parse(first) unless first.is_a?(::Date) || first.is_a?(::Time)
-        second = Date.parse(second) unless second.is_a?(::Date) || second.is_a?(::Time)
-
-        first = first.to_date if first.is_a?(::Time)
-        second = second.to_date if second.is_a?(::Time)
+        first = cleanse_date(first)
+        second = cleanse_date(second)
 
         difference_in_days(first, second).to_f / MAX_DAYS
       end
@@ -21,6 +18,15 @@ module SlideRule
         distance = (first.mday - second.mday).abs
         return distance if distance <= MAX_DAYS
         MAX_DAYS - (distance - MAX_DAYS)
+      end
+
+      private
+
+      def cleanse_date(date)
+        date = Date.parse(date) unless date.is_a?(::Date) || date.is_a?(::Time)
+        date = date.to_date if date.is_a?(::Time)
+
+        date
       end
     end
   end

@@ -27,12 +27,11 @@ module SlideRule
     def matches(obj, array, threshold)
       array.map do |item|
         distance = calculate_distance(obj, item)
-        if distance < threshold
-          {
-            item: item,
-            distance: distance
-          }
-        end
+        next nil unless distance < threshold
+        {
+          item: item,
+          distance: distance
+        }
       end.compact
     end
 
@@ -53,7 +52,7 @@ module SlideRule
         val2 = i2.send(attribute)
         calculator = get_calculator(rule[:type])
         calculator.calculate(val1, val2).to_f * rule[:weight]
-      end.inject(0.0) { |calculated_dist, dist| calculated_dist + dist }
+      end.reduce(0.0, &:+)
     end
 
     def get_calculator(calculator)

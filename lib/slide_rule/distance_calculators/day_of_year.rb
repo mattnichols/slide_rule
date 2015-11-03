@@ -4,11 +4,8 @@ module SlideRule
       DAYS_IN_YEAR = 365
 
       def calculate(date_1, date_2)
-        date_1 = Date.parse(date_1) unless date_1.is_a?(::Date) || date_1.is_a?(::Time)
-        date_2 = Date.parse(date_2) unless date_2.is_a?(::Date) || date_2.is_a?(::Time)
-
-        date_1 = date_1.to_date if date_1.is_a?(::Time)
-        date_2 = date_2.to_date if date_2.is_a?(::Time)
+        date_1 = cleanse_date(date_1)
+        date_2 = cleanse_date(date_2)
 
         days_apart = (date_1.mjd - date_2.mjd).abs
 
@@ -16,6 +13,15 @@ module SlideRule
 
         distance = days_apart.to_f / DAYS_IN_YEAR
         distance.round(2)
+      end
+
+      private
+
+      def cleanse_date(date)
+        date = Date.parse(date) unless date.is_a?(::Date) || date.is_a?(::Time)
+        date = date.to_date if date.is_a?(::Time)
+
+        date
       end
     end
   end
