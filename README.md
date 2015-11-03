@@ -1,6 +1,4 @@
-[![Gem Version](https://badge.fury.io/rb/slide_rule.svg)](https://badge.fury.io/rb/slide_rule)
-
-[![Build Status](https://travis-ci.org/mattnichols/slide_rule.svg)](https://travis-ci.org/mattnichols/slide_rule)
+[![Gem Version](https://badge.fury.io/rb/slide_rule.svg)](https://badge.fury.io/rb/slide_rule) [![Build Status](https://travis-ci.org/mattnichols/slide_rule.svg)](https://travis-ci.org/mattnichols/slide_rule)
 
 # SlideRule
 Ruby object distance calculator
