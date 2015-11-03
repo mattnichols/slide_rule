@@ -1,3 +1,4 @@
 .rspec
 **.DS_Store
 Guardfile
+Gemfile.lock
