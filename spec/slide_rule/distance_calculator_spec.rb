@@ -94,7 +94,7 @@ describe ::SlideRule::DistanceCalculator do
         # -----------------------------------------
         #   = 0.2318181818181818
         distance = calculator.calculate_distance(example, candidate)
-        expect(distance).to eq((3.0 * 0.5 / 15) + (4.0 * 0.5 / 11))
+        expect(distance.round(4)).to eq(((3.0 * 0.5 / 15) + (4.0 * 0.5 / 11)).round(4))
       end
     end
 

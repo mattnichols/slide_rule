@@ -1,4 +1,4 @@
-require 'levenshtein'
+require 'vladlev'
 
 require_relative './slide_rule/version.rb'
 require_relative './slide_rule/distance_calculator.rb'
