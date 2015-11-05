@@ -1,6 +1,5 @@
 language: ruby
 rvm:
-  - 2.2.0
   - jruby-1.7.20.1
+  - jruby-9.0.1.0
 before_install: gem install bundler -v 1.10.6
-before_install: echo 'yes' | gem uninstall ffi -a -I || true
