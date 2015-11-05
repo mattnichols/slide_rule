@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   ##
   # Dependencies
   #
-  s.add_runtime_dependency 'levenshtein', '~> 0.2'
+  s.add_runtime_dependency 'vladlev', '~> 1.0'
 
   ##
   # Development Dependencies
