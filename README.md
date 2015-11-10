@@ -19,15 +19,16 @@ _Note: weights are assumed to be equal if not provided_
 
 #API
 
-##Describe the field calculators
+##Describe the field distance calculators
 
 Each field to be considered in the distance calculation should be described 
 with a calculation method and weight(optional)
 
 Valid calculators:
 
-* day_of_month (this needs to be factored into configurable date_recurrence)
-* float_range_distance
+* day_of_year
+* day_of_month
+* levenshtein
 
 ```ruby
 distance_rules = {
@@ -81,3 +82,9 @@ matcher.closest_match(candidate, [example, example2], 0.2)
 => example
 
 ```
+
+# To Do
+
+* Add more field distance calculators
+
+

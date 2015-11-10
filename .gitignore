@@ -2,3 +2,7 @@
 **.DS_Store
 Guardfile
 Gemfile.lock
+vendor/cache
+.ruby-gemset
+.ruby-version
+pkg/
