@@ -19,6 +19,12 @@ describe ::SlideRule::DistanceCalculator do
     end
   end
 
+  class NilCalc
+    def calculate(_first, _second)
+      nil
+    end
+  end
+
   let(:examples) do
     [
       ::ExampleTransaction.new(amount: 25.00,   date: '2015-02-05', description: 'Audible.com'),
@@ -95,6 +101,22 @@ describe ::SlideRule::DistanceCalculator do
         #   = 0.2318181818181818
         distance = calculator.calculate_distance(example, candidate)
         expect(distance.round(4)).to eq(((3.0 * 0.5 / 15) + (4.0 * 0.5 / 11)).round(4))
+      end
+
+      it 'should renormalize on nil' do
+        calculator = ::SlideRule::DistanceCalculator.new(
+          description: {
+            weight: 0.50,
+            type: :levenshtein
+          },
+          date: {
+            weight: 0.50,
+            type: NilCalc
+          }
+        )
+        example1 = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
+        example2 = ::ExampleTransaction.new(amount: 25.00, date: '2015-06-08', description: 'Audible Inc')
+        expect(calculator.calculate_distance(example1, example2).round(4)).to eq((4.0 / 11).round(4))
       end
     end
 

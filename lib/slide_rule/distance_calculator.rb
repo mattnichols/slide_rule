@@ -47,12 +47,9 @@ module SlideRule
     #   }
     # }
     def calculate_distance(i1, i2)
-      @rules.map do |attribute, rule|
-        val1 = i1.send(attribute)
-        val2 = i2.send(attribute)
-        calculator = get_calculator(rule[:type])
-        calculator.calculate(val1, val2).to_f * rule[:weight]
-      end.reduce(0.0, &:+)
+      calculate_weighted_distances(i1, i2).reduce(0.0) do |distance, obj|
+        distance + (obj[:distance] * obj[:weight])
+      end
     end
 
     def get_calculator(calculator)
@@ -66,12 +63,37 @@ module SlideRule
       klass.new
     end
 
+    private
+
+    def calculate_weighted_distances(i1, i2)
+      distances = @rules.map do |attribute, rule|
+        val1 = i1.send(attribute)
+        val2 = i2.send(attribute)
+        distance = get_calculator(rule[:type]).calculate(val1, val2)
+        next { distance: distance.to_f, weight: rule[:weight] } unless distance.nil?
+
+        nil
+      end
+      normalize_weights_array(distances) if distances.compact!
+
+      distances
+    end
+
     # Ensures all weights add up to 1.0
     #
     def normalize_weights(rules_hash)
       rules = rules_hash.dup
       weight_total = rules.map { |_attr, rule| rule[:weight] }.reduce(0.0, &:+)
       rules.each do |_attr, rule|
+        rule[:weight] = rule[:weight] / weight_total
+      end
+    end
+
+    # Ensures all weights add up to 1.0 in array of hashes
+    #
+    def normalize_weights_array(rules)
+      weight_total = rules.map { |rule| rule[:weight] }.reduce(0.0, &:+)
+      rules.each do |rule|
         rule[:weight] = rule[:weight] / weight_total
       end
     end
