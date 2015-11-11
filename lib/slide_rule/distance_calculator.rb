@@ -26,6 +26,13 @@ module SlideRule
       matches(obj, array, threshold).sort_by { |match| match[:distance] }.first
     end
 
+    def closest_matching_item(obj, array, threshold = 1.0)
+      match = closest_match(obj, array, threshold)
+      return nil if match.nil?
+
+      match[:item]
+    end
+
     def matches(obj, array, threshold)
       array.map do |item|
         distance = calculate_distance(obj, item)

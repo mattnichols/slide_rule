@@ -63,6 +63,11 @@ describe ::SlideRule::DistanceCalculator do
       example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
       expect(calculator.closest_match(example, examples)[:item]).to eq(examples[0])
     end
+
+    it 'finds closest matching item' do
+      example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
+      expect(calculator.closest_matching_item(example, examples)).to eq(examples[0])
+    end
   end
 
   describe '#calculate_distance' do
