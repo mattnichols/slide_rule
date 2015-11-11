@@ -42,11 +42,11 @@ describe ::SlideRule::DistanceCalculator do
       ::SlideRule::DistanceCalculator.new(
         description: {
           weight: 0.80,
-          type: :levenshtein
+          calculator: :levenshtein
         },
         date: {
           weight: 0.90,
-          type: :day_of_month
+          calculator: :day_of_month
         }
       )
     end
@@ -66,11 +66,11 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 1.00,
-            type: :levenshtein
+            calculator: :levenshtein
           },
           date: {
             weight: 0.50,
-            type: :day_of_month
+            calculator: :day_of_month
           }
         )
         example = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
@@ -82,11 +82,11 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 0.50,
-            type: :levenshtein
+            calculator: :levenshtein
           },
           date: {
             weight: 0.50,
-            type: :day_of_month
+            calculator: :day_of_month
           }
         )
         example = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
@@ -107,15 +107,16 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 0.50,
-            type: :levenshtein
+            calculator: :levenshtein
           },
           date: {
             weight: 0.50,
-            type: NilCalc
+            calculator: NilCalc
           }
         )
         example1 = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
         example2 = ::ExampleTransaction.new(amount: 25.00, date: '2015-06-08', description: 'Audible Inc')
+
         expect(calculator.calculate_distance(example1, example2).round(4)).to eq((4.0 / 11).round(4))
       end
     end
@@ -125,7 +126,7 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 1.00,
-            type: CustomCalc
+            calculator: CustomCalc
           }
         )
         example = ::ExampleTransaction.new
@@ -133,6 +134,28 @@ describe ::SlideRule::DistanceCalculator do
 
         distance = calculator.calculate_distance(example, candidate)
         expect(distance).to eq(0.9)
+      end
+    end
+
+    context 'validates rules on initialize' do
+      it 'should allow :type' do
+        ::SlideRule::DistanceCalculator.new(
+          description: {
+            weight: 1.00,
+            type: CustomCalc
+          }
+        )
+      end
+
+      it 'should raise error if not valid calculator' do
+        expect do
+          ::SlideRule::DistanceCalculator.new(
+            description: {
+              weight: 1.00,
+              calculator: :some_junk
+            }
+          )
+        end.to raise_error
       end
     end
   end
