@@ -34,11 +34,11 @@ Valid calculators:
 distance_rules = {
   :description => {
     :weight => 0.80,
-    :type => :levenshtein,
+    :calculator => :levenshtein,
   },
   :date => {
     :weight => 0.90,
-    :type => :day_of_month,
+    :calculator => :day_of_month,
   },
 }
 ```
@@ -82,6 +82,38 @@ matcher.closest_match(candidate, [example, example2], 0.2)
 => example
 
 ```
+
+## Custom Field Distance Calculators
+
+To define a custom field distance calculator, define a class with a `calculate(value1, value2)` method.
+
+Requirements:
+* Class must be stateless
+* Calculate should return a float from `0` (perfect match) to `1.0` (no match)
+* Calculation should not be order dependent (e.g. `calculate(a, b) == calculate(b, a)`)
+
+```ruby
+class StringLengthCalculator
+  def calculate(l1, l2)
+    diff = (l1 - l2).abs.to_f
+    return diff / [l1, l2].max
+  end
+end
+
+matcher = ::SlideRule::DistanceCalculator.new(
+  :length => {
+    :weight => 1.0,
+    :calculator => StringLengthCalculator
+  }
+)
+
+# Find the string with the closest length
+matcher.closest_match("Howdy Doody Time!", ["Felix the cat", "Mighty Mouse"], 0.5)
+# => { :item=>"Mighty Mouse", :distance=>0.29411764705882354 }
+```
+
+See the [distance_calculators](https://github.com/mattnichols/slide_rule/tree/master/lib/slide_rule/distance_calculators) directory in source for more examples.
+
 
 # To Do
 
