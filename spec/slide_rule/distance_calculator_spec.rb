@@ -51,12 +51,22 @@ describe ::SlideRule::DistanceCalculator do
       )
     end
 
-    it 'finds recurring transaction' do
+    it 'finds closest' do
       example = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
       expect(calculator.closest_match(example, examples, 0.2)[:item]).to eq(examples[3])
 
       example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
       expect(calculator.closest_match(example, examples, 0.2)[:item]).to eq(examples[0])
+    end
+
+    it 'with default threshold' do
+      example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
+      expect(calculator.closest_match(example, examples)[:item]).to eq(examples[0])
+    end
+
+    it 'finds closest matching item' do
+      example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
+      expect(calculator.closest_matching_item(example, examples)).to eq(examples[0])
     end
   end
 

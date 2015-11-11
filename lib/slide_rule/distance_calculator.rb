@@ -22,14 +22,21 @@ module SlideRule
       end
     end
 
-    def closest_match(obj, array, threshold)
-      matches(obj, array, threshold).sort { |match| match[:distance] }.first
+    def closest_match(obj, array, threshold = 1.0)
+      matches(obj, array, threshold).sort_by { |match| match[:distance] }.first
+    end
+
+    def closest_matching_item(obj, array, threshold = 1.0)
+      match = closest_match(obj, array, threshold)
+      return nil if match.nil?
+
+      match[:item]
     end
 
     def matches(obj, array, threshold)
       array.map do |item|
         distance = calculate_distance(obj, item)
-        next nil unless distance < threshold
+        next nil unless distance <= threshold
         {
           item: item,
           distance: distance
