@@ -6,6 +6,10 @@ describe ::SlideRule::DistanceCalculators::DayOfMonth do
       expect(described_class.new.calculate('2012-03-19', '2014-08-19')).to eq(0.0)
     end
 
+    it 'should accept epoch date' do
+      expect(described_class.new.calculate(1_444_262_400, 1_444_262_400)).to eq(0.0)
+    end
+
     it 'should calculate when date is in the same month' do
       expect(described_class.new.calculate('2012-03-19', '2014-08-22')).to eq(3.0 / 15)
       expect(described_class.new.calculate('2012-03-19', '2014-08-09')).to eq(10.0 / 15)
