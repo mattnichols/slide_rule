@@ -147,25 +147,49 @@ describe ::SlideRule::DistanceCalculator do
       end
     end
 
-    context 'validates rules on initialize' do
-      it 'should allow :type' do
-        ::SlideRule::DistanceCalculator.new(
-          description: {
-            weight: 1.00,
-            type: CustomCalc
-          }
-        )
-      end
-
-      it 'should raise error if not valid calculator' do
-        expect do
+    describe '#initialize' do
+      context 'validates rules on initialize' do
+        it 'should allow :type' do
           ::SlideRule::DistanceCalculator.new(
             description: {
               weight: 1.00,
-              calculator: :some_junk
+              type: CustomCalc
             }
           )
-        end.to raise_error
+        end
+
+        it 'should not modify input rule hash' do
+          rules = {
+            description: {
+              weight: 1.0,
+              calculator: CustomCalc
+            },
+            name: {
+              weight: 1.0,
+              type: CustomCalc
+            }
+          }
+          ::SlideRule::DistanceCalculator.new(rules)
+          # Run a second time to ensure that no calculator instance is in rules. Will currently throw an error.
+          ::SlideRule::DistanceCalculator.new(rules)
+
+          # :type should still be in original hash
+          expect(rules[:name].key?(:calculator)).to eq(false)
+
+          # :weight should not be normalized in original hash
+          expect(rules[:name][:weight]).to eq(1.0)
+        end
+
+        it 'should raise error if not valid calculator' do
+          expect do
+            ::SlideRule::DistanceCalculator.new(
+              description: {
+                weight: 1.00,
+                calculator: :some_junk
+              }
+            )
+          end.to raise_error(::ArgumentError, 'Unable to find calculator SomeJunk')
+        end
       end
     end
   end

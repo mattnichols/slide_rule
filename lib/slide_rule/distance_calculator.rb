@@ -81,7 +81,11 @@ module SlideRule
       return calculator.new if calculator.is_a?(Class)
 
       klass_name = "#{calculator.to_s.split('_').collect(&:capitalize).join}"
-      klass = ::SlideRule::DistanceCalculators.const_get(klass_name)
+      klass = begin
+        ::SlideRule::DistanceCalculators.const_get(klass_name)
+      rescue(::NameError)
+        nil
+      end
 
       fail ArgumentError, "Unable to find calculator #{klass_name}" if klass.nil?
 
@@ -106,19 +110,30 @@ module SlideRule
       end
     end
 
+    # Prepares a duplicate of given rules hash with normalized weights and calculator instances
+    #
     def prepare_rules(rules)
-      prepared_rules = rules.dup
-      prepared_rules = normalize_weights(prepared_rules)
-      prepared_rules.each do |_attr, rule|
+      prepared_rules = rules.each_with_object({}) do |(attribute, rule), copy|
+        rule = copy[attribute] = safe_dup(rule)
+
         if rule[:type]
           puts 'Rule key `:type` is deprecated. Use `:calculator` instead.'
           rule[:calculator] = rule[:type]
         end
 
         rule[:calculator] = get_calculator(rule[:calculator])
+
+        copy
       end
+      prepared_rules = normalize_weights(prepared_rules)
 
       prepared_rules
+    end
+
+    def safe_dup(obj)
+      obj.dup
+    rescue
+      obj
     end
   end
 end
