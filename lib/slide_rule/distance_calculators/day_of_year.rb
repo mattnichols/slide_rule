@@ -18,6 +18,7 @@ module SlideRule
       private
 
       def cleanse_date(date)
+        date = Time.at(date).utc.to_date if date.is_a?(::Fixnum)
         date = Date.parse(date) unless date.is_a?(::Date) || date.is_a?(::Time)
         date = date.to_date if date.is_a?(::Time)
 

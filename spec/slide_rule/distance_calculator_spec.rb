@@ -19,6 +19,12 @@ describe ::SlideRule::DistanceCalculator do
     end
   end
 
+  class NilCalc
+    def calculate(_first, _second)
+      nil
+    end
+  end
+
   let(:examples) do
     [
       ::ExampleTransaction.new(amount: 25.00,   date: '2015-02-05', description: 'Audible.com'),
@@ -36,21 +42,31 @@ describe ::SlideRule::DistanceCalculator do
       ::SlideRule::DistanceCalculator.new(
         description: {
           weight: 0.80,
-          type: :levenshtein
+          calculator: :levenshtein
         },
         date: {
           weight: 0.90,
-          type: :day_of_month
+          calculator: :day_of_month
         }
       )
     end
 
-    it 'finds recurring transaction' do
+    it 'finds closest' do
       example = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
       expect(calculator.closest_match(example, examples, 0.2)[:item]).to eq(examples[3])
 
       example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
       expect(calculator.closest_match(example, examples, 0.2)[:item]).to eq(examples[0])
+    end
+
+    it 'with default threshold' do
+      example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
+      expect(calculator.closest_match(example, examples)[:item]).to eq(examples[0])
+    end
+
+    it 'finds closest matching item' do
+      example = ExampleTransaction.new(description: 'Audible.com', date: '2015-06-05')
+      expect(calculator.closest_matching_item(example, examples)).to eq(examples[0])
     end
   end
 
@@ -89,11 +105,11 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 1.00,
-            type: :levenshtein
+            calculator: :levenshtein
           },
           date: {
             weight: 0.50,
-            type: :day_of_month
+            calculator: :day_of_month
           }
         )
         example = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
@@ -105,11 +121,11 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 0.50,
-            type: :levenshtein
+            calculator: :levenshtein
           },
           date: {
             weight: 0.50,
-            type: :day_of_month
+            calculator: :day_of_month
           }
         )
         example = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
@@ -125,6 +141,23 @@ describe ::SlideRule::DistanceCalculator do
         distance = calculator.calculate_distance(example, candidate)
         expect(distance.round(4)).to eq(((3.0 * 0.5 / 15) + (4.0 * 0.5 / 11)).round(4))
       end
+
+      it 'should renormalize on nil' do
+        calculator = ::SlideRule::DistanceCalculator.new(
+          description: {
+            weight: 0.50,
+            calculator: :levenshtein
+          },
+          date: {
+            weight: 0.50,
+            calculator: NilCalc
+          }
+        )
+        example1 = ::ExampleTransaction.new(amount: 25.00, date: '2015-02-05', description: 'Audible.com')
+        example2 = ::ExampleTransaction.new(amount: 25.00, date: '2015-06-08', description: 'Audible Inc')
+
+        expect(calculator.calculate_distance(example1, example2).round(4)).to eq((4.0 / 11).round(4))
+      end
     end
 
     context 'uses custom calculator' do
@@ -132,7 +165,7 @@ describe ::SlideRule::DistanceCalculator do
         calculator = ::SlideRule::DistanceCalculator.new(
           description: {
             weight: 1.00,
-            type: CustomCalc
+            calculator: CustomCalc
           }
         )
         example = ::ExampleTransaction.new
@@ -140,6 +173,52 @@ describe ::SlideRule::DistanceCalculator do
 
         distance = calculator.calculate_distance(example, candidate)
         expect(distance).to eq(0.9)
+      end
+    end
+
+    describe '#initialize' do
+      context 'validates rules on initialize' do
+        it 'should allow :type' do
+          ::SlideRule::DistanceCalculator.new(
+            description: {
+              weight: 1.00,
+              type: CustomCalc
+            }
+          )
+        end
+
+        it 'should not modify input rule hash' do
+          rules = {
+            description: {
+              weight: 1.0,
+              calculator: CustomCalc
+            },
+            name: {
+              weight: 1.0,
+              type: CustomCalc
+            }
+          }
+          ::SlideRule::DistanceCalculator.new(rules)
+          # Run a second time to ensure that no calculator instance is in rules. Will currently throw an error.
+          ::SlideRule::DistanceCalculator.new(rules)
+
+          # :type should still be in original hash
+          expect(rules[:name].key?(:calculator)).to eq(false)
+
+          # :weight should not be normalized in original hash
+          expect(rules[:name][:weight]).to eq(1.0)
+        end
+
+        it 'should raise error if not valid calculator' do
+          expect do
+            ::SlideRule::DistanceCalculator.new(
+              description: {
+                weight: 1.00,
+                calculator: :some_junk
+              }
+            )
+          end.to raise_error(::ArgumentError, 'Unable to find calculator SomeJunk')
+        end
       end
     end
   end

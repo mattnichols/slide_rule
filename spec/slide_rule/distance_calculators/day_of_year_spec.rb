@@ -5,6 +5,10 @@ describe ::SlideRule::DistanceCalculators::DayOfYear do
     it 'should return a 0 distance' do
       expect(described_class.new.calculate('2015-10-8', '2015-10-8')).to eq(0.0)
     end
+
+    it 'should accept epoch date' do
+      expect(described_class.new.calculate(1_444_262_400, 1_444_262_400)).to eq(0.0)
+    end
   end
 
   context 'when dates are more than a year apart' do
