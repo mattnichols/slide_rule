@@ -24,6 +24,11 @@ module SlideRule
       matches(obj, array, threshold).sort { |match| match[:distance] }.first
     end
 
+    def is_match?(obj_1, obj_2, threshold)
+      distance = calculate_distance(obj_1, obj_2)
+      distance < threshold
+    end
+
     def matches(obj, array, threshold)
       array.map do |item|
         distance = calculate_distance(obj, item)

@@ -54,6 +54,35 @@ describe ::SlideRule::DistanceCalculator do
     end
   end
 
+  describe '#is_match?' do
+    let(:calculator) do
+      ::SlideRule::DistanceCalculator.new(
+        description: {
+          weight: 0.80,
+          type: :levenshtein
+        },
+        date: {
+          weight: 0.90,
+          type: :day_of_month
+        }
+      )
+    end
+
+    it 'returns true if there is a match' do 
+      example_1 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
+      example_2 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
+
+      expect(calculator.is_match?(example_1, example_2, 0.2)).to be(true)
+    end
+
+    it 'returns false if there is a match' do 
+      example_1 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
+      example_2 = ExampleTransaction.new(description: 'Taco Bell', date: '2015-06-17')
+
+      expect(calculator.is_match?(example_1, example_2, 0.2)).to be(false)
+    end
+  end
+
   describe '#calculate_distance' do
     context 'uses built-in calculator' do
       it 'should calculate perfect match' do
