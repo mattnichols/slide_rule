@@ -75,11 +75,11 @@ describe ::SlideRule::DistanceCalculator do
       ::SlideRule::DistanceCalculator.new(
         description: {
           weight: 0.80,
-          type: :levenshtein
+          calculator: :levenshtein
         },
         date: {
           weight: 0.90,
-          type: :day_of_month
+          calculator: :day_of_month
         }
       )
     end
@@ -191,7 +191,7 @@ describe ::SlideRule::DistanceCalculator do
           rules = {
             description: {
               weight: 1.0,
-              calculator: CustomCalc
+              type: CustomCalc
             },
             name: {
               weight: 1.0,

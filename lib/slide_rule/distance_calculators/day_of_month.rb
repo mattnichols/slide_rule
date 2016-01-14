@@ -8,6 +8,7 @@ module SlideRule
       #   Does not take into account the number of days in the actual month being considered.
       #
       def calculate(first, second)
+        return if first.nil? || second.nil?
         first = cleanse_date(first)
         second = cleanse_date(second)
 
