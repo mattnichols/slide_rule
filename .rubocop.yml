@@ -1,3 +1,5 @@
+inherit_from:
+  - config/rubocop/disabled.yml
 AllCops:
   DisplayCopNames: true
   Exclude:

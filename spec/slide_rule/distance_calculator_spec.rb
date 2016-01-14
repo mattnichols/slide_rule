@@ -75,23 +75,23 @@ describe ::SlideRule::DistanceCalculator do
       ::SlideRule::DistanceCalculator.new(
         description: {
           weight: 0.80,
-          type: :levenshtein
+          calculator: :levenshtein
         },
         date: {
           weight: 0.90,
-          type: :day_of_month
+          calculator: :day_of_month
         }
       )
     end
 
-    it 'returns true if there is a match' do 
+    it 'returns true if there is a match' do
       example_1 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
       example_2 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
 
       expect(calculator.is_match?(example_1, example_2, 0.2)).to be(true)
     end
 
-    it 'returns false if there is a match' do 
+    it 'returns false if there is a match' do
       example_1 = ExampleTransaction.new(description: 'Wells Fargo Dealer SVC', date: '2015-06-17')
       example_2 = ExampleTransaction.new(description: 'Taco Bell', date: '2015-06-17')
 
@@ -191,7 +191,7 @@ describe ::SlideRule::DistanceCalculator do
           rules = {
             description: {
               weight: 1.0,
-              calculator: CustomCalc
+              type: CustomCalc
             },
             name: {
               weight: 1.0,
