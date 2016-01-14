@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version       = ::SlideRule::VERSION
   s.authors       = %w(mattnichols fergmastaflex)
   s.email         = ['dev@mx.com']
-  s.homepage      = 'https://github.com/mattnichols/slide_rule'
+  s.homepage      = 'https://github.com/mxenabled/slide_rule'
   s.summary       = 'Ruby object distance calculator'
   s.description   = 'Calculates the distance between 2 arbitrary objects using specified fields and algorithms.'
   s.license       = 'MIT'
