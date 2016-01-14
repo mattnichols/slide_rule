@@ -88,7 +88,7 @@ module SlideRule
       klass_name = calculator.to_s.split('_').collect(&:capitalize).join.to_s
       klass = begin
         ::SlideRule::DistanceCalculators.const_get(klass_name)
-      rescue::NameError
+      rescue ::NameError
         nil
       end
 
