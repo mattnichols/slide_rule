@@ -8,7 +8,6 @@ AllCops:
     - 'db/**/*'
     - 'vendor/**/*'
     - 'lib/core_ext/pkcs12.rb'
-    - 'lib/slide_rule/version.rb'
 
 Metrics/LineLength:
   Max: 100
